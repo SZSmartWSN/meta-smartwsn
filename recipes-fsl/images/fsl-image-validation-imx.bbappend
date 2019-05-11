@@ -8,4 +8,6 @@ IMAGE_INSTALL += " \
     libmodbus \
     libsnap7 \
     rtl8188eu-driver \
+    python3-supervisor \
+    python3-meld3 \
 "
