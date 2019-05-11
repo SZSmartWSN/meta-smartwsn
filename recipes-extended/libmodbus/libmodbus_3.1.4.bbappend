@@ -1,0 +1,3 @@
+DEFAULT_PREFERENCE = "1"
+
+BBCLASSEXTEND = "native nativesdk"

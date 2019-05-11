@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+bindir=/usr/bin
+
+Name: libsnap7
+Description: Mutli-platform Ethernet communication suite
+Version: 1.4.1
+Libs: -L${libdir} -lsnap7
+Libs.private:
+Cflags: -I${includedir}
