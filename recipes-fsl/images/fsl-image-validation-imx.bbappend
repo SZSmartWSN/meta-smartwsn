@@ -7,4 +7,5 @@ IMAGE_INSTALL += " \
     paho-mqtt-c \
     libmodbus \
     libsnap7 \
+    rtl8188eu-driver \
 "
