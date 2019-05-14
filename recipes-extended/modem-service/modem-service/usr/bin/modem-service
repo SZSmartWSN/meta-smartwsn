@@ -1,0 +1,23 @@
+#!/bin/sh
+
+INTF=$1
+[ x$INTF == x ] && INTF=usb0
+ATPORT=/dev/ttyUSB2
+
+echo "INTF/ATPORT"$INTF"/"$ATPORT
+
+while true
+do
+	IP=`ifconfig $INTF | grep -E 'inet addr:' | awk '{print $2}' | cut -c 6-13`
+	if [ x$IP == x ]
+	then
+		echo "AT^NDISDUP=1,0" > $ATPORT
+		udhcpc -i $INTF
+		sleep 2
+	else
+		sleep 10
+	fi
+done
+
+exit 0
+
