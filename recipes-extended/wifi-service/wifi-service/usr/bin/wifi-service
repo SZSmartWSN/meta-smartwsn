@@ -1,0 +1,19 @@
+#!/bin/sh
+
+INTF=$1
+[ x$INTF == x ] && INTF=wlan0
+
+/usr/sbin/wpa_supplicant -D wext -B -i $INTF -c /etc/wpa_supplicant.conf
+
+IP=`ifconfig $INTF | grep -E 'inet addr:' | awk '{print $2}' | cut -c 6-13`
+if [ x$IP == x ]; then
+    if [ -e /var/run/udhcpc.pid ]; then
+        local UDHCPC_PID;
+        UDHCPC_PID=`cat /var/run/udhcpc.pid`
+        kill -9 $UDHCPC_PID
+    fi
+    udhcpc -b -R -i $INTF -p /var/run/udhcpc.pid
+fi
+
+exit 0
+
