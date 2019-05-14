@@ -17,8 +17,8 @@ DEPENDS += "glib-2.0"
 
 do_install() {
     install -d ${D}${bindir}
-    install -m 755 ${S}${bindir}/system-service ${D}${bindir}
+    install -m 755 ${S}${bindir}/invt-service ${D}${bindir}
 
     install -d ${D}${sysconfdir}/supervisor/conf.d/
-    install -m 755 ${S}${sysconfdir}/supervisor/conf.d/system-service.conf ${D}${sysconfdir}/supervisor/conf.d/
+    install -m 755 ${S}${sysconfdir}/supervisor/conf.d/invt-service.conf ${D}${sysconfdir}/supervisor/conf.d/
 }
