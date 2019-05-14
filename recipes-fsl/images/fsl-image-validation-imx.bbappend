@@ -10,4 +10,10 @@ IMAGE_INSTALL += " \
     rtl8188eu-driver \
     python3-supervisor \
     python3-meld3 \
+    dbus-session \
+    system-service \
+    device-service \
+    smartwsn-service \
+    quarkioe-service \
+    invt-service \
 "
