@@ -1,0 +1,16 @@
+#!/bin/sh
+
+## global variables
+WPA_IFACE="wlan0"
+
+# iwconfig variables
+IWCONFIG_BIN="/sbin/iwconfig"
+IWCONFIG_PNAME="iwconfig"
+
+ORIG_ESSID=`/sbin/iwconfig $WPA_IFACE | grep ESSID`
+ESSID=${ORIG_ESSID#*\"}
+ESSID=${ESSID%%\"*}
+
+echo $ESSID
+
+exit 0

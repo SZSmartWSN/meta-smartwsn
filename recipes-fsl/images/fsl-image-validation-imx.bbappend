@@ -16,4 +16,5 @@ IMAGE_INSTALL += " \
     smartwsn-service \
     quarkioe-service \
     invt-service \
+    wifi-service \
 "

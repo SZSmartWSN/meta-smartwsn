@@ -11,13 +11,10 @@ WPA_SUP_PNAME="wpa_supplicant"
 WPA_CLI_BIN="/usr/sbin/wpa_cli"
 WPA_CLI_PNAME="wpa_cli"
 
-# udhcpc variables
-UDHCPC_BIN="/sbin/udhcpc"
-UDHCPC_PNAME="udhcpc"
-
-# ifconfig variables
-IFCONFIG_BIN="/sbin/ifconfig"
-IFCONFIG_PNAME="ifconfig"
+# ENCRYPTO_* variables
+ENCRYPTO_NONE="NONE"
+ENCRYPTO_WEP="WEP"
+ENCRYPTO_WPA="WPA"
 
 #####################################################################
 ## verbose and stderr message wrapper
@@ -78,24 +75,40 @@ wpa_cli () {
     return 0
 }
 
-do_iface_dhcp() {
-    local UDHCPC_PID;
+do_iface_scan() {
+    local MAC;
+    local SIGNAL;
+    local ENCRYPTO;
+    local SSID;
 
-    if [ -e /var/run/udhcpc.pid ]; then
-        UDHCPC_PID=`cat /var/run/udhcpc.pid`
-        kill -9 $UDHCPC_PID
-    fi
+    wpa_cli scan > /dev/null
 
-    $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
-}
+    wpa_cli scan_result | \
+    while read line
+    do
+        MAC=`echo $line | awk '{print $1}'`
+        SIGNAL=`echo $line | awk '{print $3}'`
+        ENCRYPTO=`echo $line | awk '{print $4}'`
+        SSID=`echo $line`
+        SSID=${SSID##*\]\ }
 
-do_iface_reset() {
-    $IFCONFIG_BIN $WPA_IFACE down
-    $IFCONFIG_BIN $WPA_IFACE up
-}
+        if [ x"$MAC" = x"bssid" ]; then
+            continue;
+        else
+            echo $MAC
+        fi
 
-do_iface_init () {
-    $WPA_SUP_BIN -D wext -B -i $WPA_IFACE -c /etc/wpa_supplicant.conf
+        echo $SIGNAL
+
+        case $ENCRYPTO in
+            *"$ENCRYPTO_NONE"*) echo NONE ;;
+            *"$ENCRYPTO_WEP"*) echo WEP ;;
+            *"$ENCRYPTO_WPA"*) echo WPA ;;
+            *) echo NONE ;;
+        esac
+
+        echo $SSID
+    done
 }
 
 # verbosity variables
@@ -110,14 +123,6 @@ if [ ! -x "$WPA_SUP_BIN" ] || [ ! -x "$WPA_CLI_BIN" ]; then
 	exit 0
 fi
 
-do_iface_init
-
-IP=`ifconfig $WPA_IFACE | grep -E 'inet addr:' | awk '{print $2}' | cut -c 6-13`
-if [ x$IP == x ]; then
-    do_iface_dhcp
-fi
-
-do_iface_reset
+do_iface_scan
 
 exit 0
-
