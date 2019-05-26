@@ -33,3 +33,4 @@ do_install() {
     install -m 644 src/MQTTClientPersistence.h ${D}${includedir}
 }
 
+BBCLASSEXTEND = "native nativesdk"
