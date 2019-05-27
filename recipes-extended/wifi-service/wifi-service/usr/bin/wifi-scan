@@ -16,74 +16,15 @@ ENCRYPTO_NONE="NONE"
 ENCRYPTO_WEP="WEP"
 ENCRYPTO_WPA="WPA"
 
-#####################################################################
-## verbose and stderr message wrapper
-# Ensures a standard and easily identifiable message is printed by
-# scripts using this function library.
-#
-# log		Log a message to syslog when called non-interactively
-#		by wpa_action
-#
-# verbose	To stdout when IF_WPA_VERBOSITY or VERBOSITY is true
-#
-# action	Same as verbose but without newline
-#		Useful for allowing wpa_cli commands to echo result
-#		value of 'OK' or 'FAILED'
-#
-# stderr	Echo warning or error messages to stderr
-#
-# NB: when called by wpa_action, there is no redirection (verbose)
-#
-wpa_msg () {
-	case "$1" in 
-		"verbose")
-			shift
-			echo "$WPA_SUP_PNAME: $@" >$TO_NULL
-			;;
-		"action")
-			shift
-			echo -n "$WPA_SUP_PNAME: $@ -- " >$TO_NULL
-			;;
-		"stderr")
-			shift
-			echo "$WPA_SUP_PNAME: $@" >/dev/stderr
-			;;
-		*)
-			;;
-	esac
-}
-
-#####################################################################
-## wpa_cli wrapper
-# Path to common ctrl_interface socket and iface supplied.
-# NB: WPA_CTRL_DIR cannot be used for interactive commands, it is
-# set only in the environment that wpa_cli provides when processing
-# action events.
-#
-wpa_cli () {
-    local RESULT;
-    RESULT=`"$WPA_CLI_BIN" -i "$WPA_IFACE" "$@"`
-
-    wpa_msg stderr "$WPA_CLI_BIN -i $WPA_IFACE $@"
-    wpa_msg stderr "$? / $RESULT"
-
-    if [ "$?" -ne 0 ]; then
-        wpa_msg stderr "$WPA_CLI_BIN failed to execute shell command($@)"
-        return 1
-    fi
-
-    return 0
-}
-
 do_iface_scan() {
     local MAC;
     local SIGNAL;
     local ENCRYPTO;
     local SSID;
 
-    wpa_cli scan > /dev/null
+    "$WPA_CLI_BIN" -i "$WPA_IFACE" scan > /dev/null
 
-    wpa_cli scan_result | \
+    "$WPA_CLI_BIN" -i "$WPA_IFACE" scan_result | \
     while read line
     do
         MAC=`echo $line | awk '{print $1}'`
