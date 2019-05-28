@@ -17,4 +17,5 @@ IMAGE_INSTALL += " \
     quarkioe-service \
     invt-service \
     wifi-service \
+    localconfig-service \
 "
