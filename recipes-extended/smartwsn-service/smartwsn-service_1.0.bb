@@ -11,7 +11,12 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
-DEPENDS += "glib-2.0"
+DEPENDS += " \
+    glib-2.0 \
+    protobuf-c \
+    paho-mqtt-c \
+    curl \
+    "
 
 # TARGET_CC_ARCH += "${LDFLAGS}"
 do_install() {
