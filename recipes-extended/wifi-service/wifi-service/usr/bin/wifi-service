@@ -19,105 +19,34 @@ UDHCPC_PNAME="udhcpc"
 IFCONFIG_BIN="/sbin/ifconfig"
 IFCONFIG_PNAME="ifconfig"
 
-#####################################################################
-## verbose and stderr message wrapper
-# Ensures a standard and easily identifiable message is printed by
-# scripts using this function library.
-#
-# log		Log a message to syslog when called non-interactively
-#		by wpa_action
-#
-# verbose	To stdout when IF_WPA_VERBOSITY or VERBOSITY is true
-#
-# action	Same as verbose but without newline
-#		Useful for allowing wpa_cli commands to echo result
-#		value of 'OK' or 'FAILED'
-#
-# stderr	Echo warning or error messages to stderr
-#
-# NB: when called by wpa_action, there is no redirection (verbose)
-#
-wpa_msg () {
-	case "$1" in 
-		"verbose")
-			shift
-			echo "$WPA_SUP_PNAME: $@" >$TO_NULL
-			;;
-		"action")
-			shift
-			echo -n "$WPA_SUP_PNAME: $@ -- " >$TO_NULL
-			;;
-		"stderr")
-			shift
-			echo "$WPA_SUP_PNAME: $@" >/dev/stderr
-			;;
-		*)
-			;;
-	esac
-}
-
-#####################################################################
-## wpa_cli wrapper
-# Path to common ctrl_interface socket and iface supplied.
-# NB: WPA_CTRL_DIR cannot be used for interactive commands, it is
-# set only in the environment that wpa_cli provides when processing
-# action events.
-#
-wpa_cli () {
-    local RESULT;
-    RESULT=`"$WPA_CLI_BIN" -i "$WPA_IFACE" "$@"`
-
-    wpa_msg stderr "$WPA_CLI_BIN -i $WPA_IFACE $@"
-    wpa_msg stderr "$? / $RESULT"
-
-    if [ "$?" -ne 0 ]; then
-        wpa_msg stderr "$WPA_CLI_BIN failed to execute shell command($@)"
-        return 1
-    fi
-
-    return 0
-}
-
-do_iface_dhcp() {
-    local UDHCPC_PID;
-
-    if [ -e /var/run/udhcpc.pid ]; then
-        UDHCPC_PID=`cat /var/run/udhcpc.pid`
-        kill -9 $UDHCPC_PID
-    fi
-
-    $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
-}
-
-do_iface_reset() {
-    $IFCONFIG_BIN $WPA_IFACE down
-    $IFCONFIG_BIN $WPA_IFACE up
-}
-
-do_iface_init () {
-    $WPA_SUP_BIN -D wext -B -i $WPA_IFACE -c /etc/wpa_supplicant.conf
-}
-
-# verbosity variables
-if [ -n "$IF_WPA_VERBOSITY" ] || [ "$VERBOSITY" = "1" ]; then
-	TO_NULL="/dev/stdout"
-else
-	TO_NULL="/dev/null"
-fi
+######################################################################
 
 # quit if executables are not installed
 if [ ! -x "$WPA_SUP_BIN" ] || [ ! -x "$WPA_CLI_BIN" ]; then
 	exit 0
 fi
 
-do_iface_init
+# init wlan0
+$WPA_SUP_BIN -D wext -B -i $WPA_IFACE -c /etc/wpa_supplicant.conf
 
-IP=`ifconfig $WPA_IFACE | grep -E 'inet addr:' | awk '{print $2}' | cut -c 6-13`
-if [ x$IP == x ]; then
-    do_iface_dhcp
+# wlan's ssid is existed or not
+SSID=`"$WPA_CLI_BIN" -i "$WPA_IFACE" get_network 0 ssid`
+if [ x"$SSID" == x"FAIL" ]; then
+    exit 0
 fi
 
-do_iface_reset
+# alloc IP address for wlan0
+IP=`ifconfig "$WPA_IFACE" | grep -E 'inet addr:' | awk '{print $2}' | cut -c 6-13`
+if [ x"$IP" == x ]; then
+    if [ -e /var/run/udhcpc.pid ]; then
+        UDHCPC_PID=`cat /var/run/udhcpc.pid`
+        kill -9 $UDHCPC_PID
+    fi
+    $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
+fi
+
+# reset wlan0
+$IFCONFIG_BIN $WPA_IFACE down
+$IFCONFIG_BIN $WPA_IFACE up
 
 exit 0
-
