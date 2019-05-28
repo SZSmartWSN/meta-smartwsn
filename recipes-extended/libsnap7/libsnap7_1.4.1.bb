@@ -16,7 +16,7 @@ TARGET_CC_ARCH += "${LDFLAGS}"
 
 do_install() {
     install -d ${D}${libdir}
-    oe_libinstall -C ${S} -so libsnap7 ${D}${libdir}
+    oe_soinstall ${S}/libsnap7.so.${PV} ${D}${libdir}
 
     install -d ${D}${libdir}/pkgconfig
     install -m 644 ${S}/libsnap7.pc ${D}${libdir}/pkgconfig/
