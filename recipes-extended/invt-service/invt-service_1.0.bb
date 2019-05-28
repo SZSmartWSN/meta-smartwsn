@@ -11,7 +11,10 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
-DEPENDS += "glib-2.0"
+DEPENDS += " \
+    glib-2.0 \
+    paho-mqtt-c \
+    "
 
 # TARGET_CC_ARCH += "${LDFLAGS}"
 
