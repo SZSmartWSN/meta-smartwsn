@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all" />
+		<style>
+		</style>
+	</head>
+
+	<body>
+		<div style="margin-left: 15px;margin-right: 15px;">
+			<div class="layui-form" lay-filter="form-cloud" style="padding-top: 50px;">
+				<fieldset class="layui-elem-field layui-field-title fieldset-border-color fieldset-margin" style="padding-top: 10px;">
+					<legend>云服务配置</legend>
+				</fieldset>
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width">描述</label>
+					<div class="layui-input-inline" style="width: 300px;">
+						<label class="layui-form-label label-width" style="width: 100%;text-align: left;">配置Smart Gateway云平台地址</label>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width" for="dataSelect">地址</label>
+					<div class="layui-input-inline" style="width: 350px;">
+						<input type="text" name="cloudSet" id="cloudSet" lay-verify="cloudSet" placeholder="请输入云平台地址(192.168.1.1:61613)" autocomplete="off"
+						 class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width" for="dataSelect"></label>
+					<div class="layui-input-inline">
+						<input type="button" lay-submit lay-filter="user-cloud-submit" value="保存" style="width: 120px" class="layui-btn">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form" lay-filter="form-cloud" style="padding-top: 10px;display: inherit;" id="div-wifi">
+				<fieldset class="layui-elem-field layui-field-title fieldset-border-color fieldset-margin" style="padding-top: 10px;">
+					<legend>WI-FI配置</legend>
+				</fieldset>
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width">描述</label>
+					<div class="layui-input-inline" style="width: 300px;">
+						<label class="layui-form-label label-width" style="width: 100%;text-align: left;">配置Gateway 设备中WIFI模块的SSID和密码</label>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width" for="ssid">SSID</label>
+					<div class="layui-input-inline" style="width: 350px;">
+						<input type="text" name="HandoverCompany" id="HandoverCompany" class="layui-input" style="position:absolute;z-index:2;width:80%;"
+						 lay-verify="HandoverCompany" placeholder="请选择或输入SSID" value="" autocomplete="off">
+						<select type="text" id="hc_select" lay-filter="hc_select" autocomplete="off" placeholder="SSID" lay-verify="required"
+						 class="layui-select" lay-search>
+						</select>
+					</div>
+					<div class="layui-form-mid layui-word-aux">可选择下拉框中的SSID或手动输入SSID</div>
+				</div>
+				<div class="layui-form-item" id="passwordDiv">
+					<label class="layui-form-label label-width" for="password">密码</label>
+					<div class="layui-input-inline" style="width: 350px;">
+						<input type="password" name="password" id="password" lay-verify="password" placeholder="请输入WIFI 密码" autocomplete="off"
+						 class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width" for="password">加密方式</label>
+					<div class="layui-input-inline" style="width: 350px;">
+						<select name="encryptionSelect" id="encryptionSelect" lay-verify="encryptionSelect" lay-filter="encryptionSelect">
+							<option value="1">NONE</option>
+							<option value="2">WEP</option>
+							<option value="3" selected="">WPA</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width"></label>
+					<div class="layui-input-inline">
+						<input type="button" lay-submit lay-filter="user-wifi-submit" value="保存" style="width: 120px" class="layui-btn">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="layui/layui.js"></script>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/internet.js"></script>
+	</body>
+
+</html>
