@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## global variables
 WPA_IFACE="wlan0"
@@ -16,7 +16,28 @@ ENCRYPTO_NONE="NONE"
 ENCRYPTO_WEP="WEP"
 ENCRYPTO_WPA="WPA"
 
-do_iface_scan() {
+declare -a ssid_array
+ssid_idx=0
+
+function do_ssid_duplicate_check() {
+    local ssid;
+
+    ssid=$1
+
+    for name in "${ssid_array[@]}"
+    do
+        if [ x"$ssid" == x"$name" ]; then
+            return 0
+        fi
+    done
+
+    ssid_array[$ssid_idx]="$ssid"
+    let "ssid_idx=$ssid_idx+1"
+
+    return 1
+}
+
+function do_iface_scan() {
     local MAC;
     local SIGNAL;
     local ENCRYPTO;
@@ -35,19 +56,20 @@ do_iface_scan() {
 
         if [ x"$MAC" = x"bssid" ]; then
             continue;
-        else
-            echo $MAC
         fi
 
-        echo $SIGNAL
-
         case $ENCRYPTO in
-            *"$ENCRYPTO_NONE"*) echo NONE ;;
-            *"$ENCRYPTO_WEP"*) echo WEP ;;
-            *"$ENCRYPTO_WPA"*) echo WPA ;;
+            *"$ENCRYPTO_NONE"*) ENCRYPTO="NONE" ;;
+            *"$ENCRYPTO_WEP"*) ENCRYPTO="WEP" ;;
+            *"$ENCRYPTO_WPA"*) ENCRYPTO="WPA" ;;
             *) echo NONE ;;
         esac
 
+        if do_ssid_duplicate_check $SSID; then continue; fi
+
+        echo $MAC
+        echo $SIGNAL
+        echo $ENCRYPTO
         echo $SSID
     done
 }
