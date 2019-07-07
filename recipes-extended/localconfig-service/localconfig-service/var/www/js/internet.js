@@ -33,6 +33,8 @@ layui.use(['form', 'layer'], function() {
 			if(pass.value !== '1'){
 				if (value.length === 0) {
 					return '请输入WIFI 密码';
+				}else if(value.length <8){
+					return '请8位密码';
 				}
 			}
 		}
