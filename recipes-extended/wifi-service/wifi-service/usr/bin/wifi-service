@@ -29,6 +29,8 @@ fi
 # init wlan0
 $WPA_SUP_BIN -D wext -B -i $WPA_IFACE -c /etc/wpa_supplicant.conf
 
+$WPA_CLI_BIN -i $WPA_IFACE -B -a /usr/bin/wifi-action
+
 # wlan's ssid is existed or not
 SSID=`"$WPA_CLI_BIN" -i "$WPA_IFACE" get_network 0 ssid`
 if [ x"$SSID" == x"FAIL" ]; then

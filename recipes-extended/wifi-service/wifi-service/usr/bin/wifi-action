@@ -1,0 +1,26 @@
+#!/bin/bash
+
+## global variables
+WPA_IFACE="wlan0"
+
+# wpa_cli variables
+WPA_CLI_BIN="/usr/sbin/wpa_cli"
+
+case "${2}" in
+        CONNECTED)
+                echo "COMMAND: CONNECTED" > /dev/kmsg
+                exit 0
+                ;;
+        DISCONNECTED)
+                echo "COMMAND: DISCONNECTED" > /dev/kmsg
+                COMMAND=reconnect
+                ;;
+        *)
+                echo "$0: unknown arguments: ${@}" >&2
+                exit 1
+                ;;
+esac
+
+$WPA_CLI_BIN -i $WPA_IFACE $COMMAND
+
+exit 0

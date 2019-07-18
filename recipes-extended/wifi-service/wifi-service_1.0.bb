@@ -8,6 +8,7 @@ SRC_URI = " \
     file://usr/bin/wifi-config \
     file://usr/bin/wifi-scan \
     file://usr/bin/wifi-ssid \
+    file://usr/bin/wifi-action \
     file://usr/bin/wifi-service \
     file://etc/supervisor/conf.d/wifi-service.conf \
     "
@@ -19,6 +20,7 @@ do_install() {
     install -m 755 ${S}${bindir}/wifi-config ${D}${bindir}
     install -m 755 ${S}${bindir}/wifi-scan ${D}${bindir}
     install -m 755 ${S}${bindir}/wifi-ssid ${D}${bindir}
+    install -m 755 ${S}${bindir}/wifi-action ${D}${bindir}
     install -m 755 ${S}${bindir}/wifi-service ${D}${bindir}
 
     install -d ${D}${sysconfdir}/supervisor/conf.d/
