@@ -19,4 +19,5 @@ IMAGE_INSTALL += " \
     csot-service \
     wifi-service \
     localconfig-service \
+    factory-service   \
 "
