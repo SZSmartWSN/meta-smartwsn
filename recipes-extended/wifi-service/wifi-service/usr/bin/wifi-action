@@ -6,9 +6,17 @@ WPA_IFACE="wlan0"
 # wpa_cli variables
 WPA_CLI_BIN="/usr/sbin/wpa_cli"
 
+# udhcpc variables
+UDHCPC_BIN="/sbin/udhcpc"
+
 case "${2}" in
         CONNECTED)
                 echo "COMMAND: CONNECTED" > /dev/kmsg
+                if [ -e /var/run/udhcpc.pid ]; then
+                    UDHCPC_PID=`cat /var/run/udhcpc.pid`
+                    kill -9 $UDHCPC_PID
+                    $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
+                fi
                 exit 0
                 ;;
         DISCONNECTED)

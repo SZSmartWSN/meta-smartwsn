@@ -15,6 +15,9 @@ SRC_URI = " \
 
 S = "${WORKDIR}"
 
+RDEPENDS_${PN} = "bash \
+"
+
 do_install() {
     install -d ${D}${bindir}
     install -m 755 ${S}${bindir}/wifi-config ${D}${bindir}
