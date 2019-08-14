@@ -20,4 +20,5 @@ IMAGE_INSTALL += " \
     wifi-service \
     localconfig-service \
     factory-service   \
+    fota-service   \
 "
