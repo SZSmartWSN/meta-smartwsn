@@ -1,5 +1,7 @@
 #!/bin/sh
 
+/usr/bin/mbt.sh
+
 # setup environment for DBUS session bus
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
     eval `dbus-launch --auto-syntax`
