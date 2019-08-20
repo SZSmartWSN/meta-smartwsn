@@ -17,7 +17,7 @@ IMAGE_INSTALL += " \
     quarkioe-service \
     invt-service \
     csot-service \
-    wifi-service \
+    network-service \
     localconfig-service \
     factory-service   \
     fota-service   \

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ## global variables
 WPA_IFACE="wlan0"
@@ -69,10 +69,7 @@ function do_iface_scan() {
             continue;
         fi
 
-        echo $MAC
-        echo $SIGNAL
-        echo $ENCRYPTO
-        echo $SSID
+        echo -ne "$MAC/$SIGNAL/$ENCRYPTO/$SSID/\n" 2> /dev/null
     done
 }
 

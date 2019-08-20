@@ -20,43 +20,6 @@ IFCONFIG_BIN="/sbin/ifconfig"
 IFCONFIG_PNAME="ifconfig"
 
 #####################################################################
-## verbose and stderr message wrapper
-# Ensures a standard and easily identifiable message is printed by
-# scripts using this function library.
-#
-# log		Log a message to syslog when called non-interactively
-#		by wpa_action
-#
-# verbose	To stdout when IF_WPA_VERBOSITY or VERBOSITY is true
-#
-# action	Same as verbose but without newline
-#		Useful for allowing wpa_cli commands to echo result
-#		value of 'OK' or 'FAILED'
-#
-# stderr	Echo warning or error messages to stderr
-#
-# NB: when called by wpa_action, there is no redirection (verbose)
-#
-wpa_msg () {
-	case "$1" in 
-		"verbose")
-			shift
-			echo "$WPA_SUP_PNAME: $@" >$TO_NULL
-			;;
-		"action")
-			shift
-			echo -n "$WPA_SUP_PNAME: $@ -- " >$TO_NULL
-			;;
-		"stderr")
-			shift
-			echo "$WPA_SUP_PNAME: $@" >/dev/stderr
-			;;
-		*)
-			;;
-	esac
-}
-
-#####################################################################
 ## wpa_cli wrapper
 # Path to common ctrl_interface socket and iface supplied.
 # NB: WPA_CTRL_DIR cannot be used for interactive commands, it is
@@ -64,14 +27,9 @@ wpa_msg () {
 # action events.
 #
 wpa_cli () {
-    local RESULT;
-    RESULT=`"$WPA_CLI_BIN" -i "$WPA_IFACE" "$@"`
-
-    wpa_msg stderr "$WPA_CLI_BIN -i $WPA_IFACE $@"
-    wpa_msg stderr "$? / $RESULT"
+    "$WPA_CLI_BIN" -i "$WPA_IFACE" "$@" 2> /dev/null
 
     if [ "$?" -ne 0 ]; then
-        wpa_msg stderr "$WPA_CLI_BIN failed to execute shell command($@)"
         return 1
     fi
 
@@ -85,8 +43,7 @@ do_iface_dhcp() {
         UDHCPC_PID=`cat /var/run/udhcpc.pid`
         kill -9 $UDHCPC_PID
     fi
-
-    $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
+    # $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
 }
 
 do_iface_reset() {
@@ -98,28 +55,32 @@ do_iface_configure () {
     local SSID;
     local PWD;
     local ENCRYPTO;
+    local METHOD;
 
     SSID=$1
     PWD=$2
     ENCRYPTO=$3
+    METHOD=$4
+
+    echo "SSID:$SSID / PWD:$PWD / ENCRYPTO:$ENCRYPTO / METHOD:$METHOD"
 
     wpa_cli select_network 0
     wpa_cli disable_network 0
     wpa_cli set_network 0 ssid \"$SSID\"
     case $ENCRYPTO in
-        "NONE")
+        1)
             echo "ENCRYPTION:NONE"
             wpa_cli set_network 0 key_mgmt NONE
             ;;
-        "WPA")
-            echo "ENCRYPTION:WPA"
-            wpa_cli set_network 0 psk \"$PWD\"
-            wpa_cli set_network 0 key_mgmt WPA-PSK
-            ;;
-        "WEP")
+        2)
             echo "ENCRYPTION:WEP"
             wpa_cli set_network 0 wep_key0 \"$PWD\"
             wpa_cli set_network wep_tx_keyidx 0
+            ;;
+        3)
+            echo "ENCRYPTION:WPA"
+            wpa_cli set_network 0 psk \"$PWD\"
+            wpa_cli set_network 0 key_mgmt WPA-PSK
             ;;
         *)
             echo "Unsupport encryption"
@@ -131,23 +92,24 @@ do_iface_configure () {
 
     wpa_cli save_config
 
-    do_iface_dhcp
+    if [ $METHOD -eq 1 ]; then
+        echo "METHOD:DHCP"
+        do_iface_dhcp
+        $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
+    else
+        echo "METHOD:MANUAL"
+        do_iface_dhcp
+    fi
 
     do_iface_reset
 }
-
-# verbosity variables
-if [ -n "$IF_WPA_VERBOSITY" ] || [ "$VERBOSITY" = "1" ]; then
-	TO_NULL="/dev/stdout"
-else
-	TO_NULL="/dev/null"
-fi
 
 # quit if executables are not installed
 if [ ! -x "$WPA_SUP_BIN" ] || [ ! -x "$WPA_CLI_BIN" ] || [ ! -x "$UDHCPC_BIN" ] || [ ! -x "$IFCONFIG_BIN" ]; then
 	exit 0
 fi
 
-do_iface_configure "$1" "$2" "$3"
+# Usage: $1 - SSID / $2 - PWD / $3 - ENCRYPTION / $4 - METHOD
+do_iface_configure "$1" "$2" $3 $4
 
 exit 0

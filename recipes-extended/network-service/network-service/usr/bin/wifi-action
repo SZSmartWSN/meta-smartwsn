@@ -17,6 +17,7 @@ case "${2}" in
                     kill -9 $UDHCPC_PID
                     $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
                 fi
+                COMMAND=scan
                 exit 0
                 ;;
         DISCONNECTED)
