@@ -12,6 +12,9 @@ SRC_URI = " \
     file://usr/bin/wifi-action \
     file://usr/bin/wifi-service \
     file://etc/supervisor/conf.d/wifi-service.conf \
+    file://etc/systemd/network/10-eth0.network \
+    file://etc/systemd/network/20-eth1.network \
+    file://etc/systemd/network/30-wlan0.network \
     "
 
 S = "${WORKDIR}"
@@ -30,4 +33,9 @@ do_install() {
 
     install -d ${D}${sysconfdir}/supervisor/conf.d/
     install -m 755 ${S}${sysconfdir}/supervisor/conf.d/wifi-service.conf ${D}${sysconfdir}/supervisor/conf.d/
+
+    install -d ${D}${sysconfdir}/systemd/network/
+    install -m 755 ${S}${sysconfdir}/systemd/network/10-eth0.network ${D}${sysconfdir}/systemd/network/
+    install -m 755 ${S}${sysconfdir}/systemd/network/20-eth1.network ${D}${sysconfdir}/systemd/network/
+    install -m 755 ${S}${sysconfdir}/systemd/network/30-wlan0.network ${D}${sysconfdir}/systemd/network/
 }
