@@ -14,13 +14,37 @@ layui.use(['form', 'layer'], function() {
 	form = layui.form;
 	layer = layui.layer;
 
-	syncConfiguration();
+	init();
 
 	//自定义验证规则
 	form.verify({
-		cloudSet: function(value) {
+		userName: function(value) {
 			if (value.length === 0) {
-				return '请输入云平台地址';
+				return '请输入用户名';
+			}
+		},
+		rawPassword: function(value) {
+			if (value.length === 0) {
+				return '请输入原密码';
+			} else if (value.length < 6) {
+				return '请输入至少6位原密码';
+			}
+		},
+		newPassword: function(value) {
+			if (value.length === 0) {
+				return '请输入新密码';
+			} else if (value.length < 6) {
+				return '请输入至少6位新密码';
+			}
+		},
+		confirmPassword: function(value) {
+			if (value.length === 0) {
+				return '请输入重复密码';
+			} else {
+				var newPassword = document.getElementById("newPassword").value;
+				if (newPassword !== value) {
+					return '重复密码与新密码不一致';
+				}
 			}
 		}
 	});
@@ -35,9 +59,11 @@ layui.use(['form', 'layer'], function() {
 		});
 		var test = GetUrlRelativePath();
 		$.ajax({
-			url: test + '/gateway/gatewayCloud',
+			url: test + '/gateway/user',
 			data: {
-				cloudAddress: data.cloudSet
+				userName: data.userName,
+				rawPassword: data.rawPassword,
+				newPassword: data.newPassword
 			},
 			dataType: 'json', //服务器返回json格式数据
 			type: 'post', //HTTP请求类型
@@ -45,9 +71,11 @@ layui.use(['form', 'layer'], function() {
 			success: function(data) {
 				layer.close(index);
 				if (data.code == 0) {
-					layer.msg("云服务配置成功，立即生效");
+					layer.msg("账号设置成功");
+				} else if (data.code == 1) {
+					layer.alert("原密码错误");
 				} else {
-					layer.alert("云服务配置失败");
+					layer.alert("账号设置失败");
 				}
 			},
 			error: function() {
@@ -55,17 +83,14 @@ layui.use(['form', 'layer'], function() {
 				layer.alert("连接异常");
 			}
 		});
+
 	});
 
+	function init() {
+		mode = sessionStorage.getItem("userName");
+		document.getElementById("userName").value = mode;
+	}
 
-	form.on('select(encryptionSelect)', function(data) {
-		var div_password = document.getElementById("passwordDiv");
-		if (data.value === "1") {
-			div_password.style.display = "none";
-		} else {
-			div_password.style.display = "inherit";
-		}
-	});
 });
 
 function GetUrlRelativePath() {
@@ -73,39 +98,4 @@ function GetUrlRelativePath() {
 	var arrUrl = url.split("//");
 	var start = arrUrl[1].split("/");
 	return "http://" + start[0];
-}
-
-
-function syncConfiguration() {
-	let index = null;
-	index = layer.msg('数据同步中...', {
-		icon: 16,
-		shade: 0.01,
-		shadeClose: false,
-		time: 10000
-	});
-	var test = GetUrlRelativePath();
-	$.ajax({
-		url: test + '/gateway/syncCloud',
-		dataType: 'json', //服务器返回json格式数据
-		type: 'post', //HTTP请求类型
-		timeout: 10000, //超时时间设置为10秒；
-		success: function(data) {
-			if (index != null) {
-				layer.close(index);
-			}
-			if (data.code == 0) {
-				let gatewayCloud = document.getElementById('cloudSet');
-				gatewayCloud.value = data.cloudAddress;
-			} else {
-				layer.alert("同步失败");
-			}
-		},
-		error: function() {
-			if (index != null) {
-				layer.close(index);
-			}
-			layer.alert("连接异常");
-		}
-	});
 }

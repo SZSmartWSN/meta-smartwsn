@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link rel="icon" href="img/logo.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="layui/css/layui.css" media="all" />
+		<script src="js/jquery.min.js"></script>
 		<style>
 			.body {
 				margin: 0;
@@ -87,9 +88,9 @@
 					</div>
 
 					<div class="layui-col-md2" style="float:right">
-						<div style="line-height: 50px;width: 70%;color: white;text-align: right;">administrator</div>
-						<div class="exit-a"><a style="line-height: 50px;height: 50px; color: white;" href="index.html"><img style="width: 16px;height: 14px;color: white;padding-right: 3px;"
-								 src="img/exit.png">退出</a></div>
+						<div style="line-height: 50px;width: 70%;color: white;text-align: right;">admin</div>
+						<div class="exit-a"><a style="line-height: 50px;height: 50px; color: white;" href="#" onclick="exitIndex()"><img
+								 style="width: 16px;height: 14px;color: white;padding-right: 3px;" src="img/exit.png">退出</a></div>
 					</div>
 				</div>
 			</div>
@@ -102,11 +103,22 @@
 						<ul>
 							<li class="li-active">
 								<div class="li-div">
-									<a href="#"><img src="img/internet.png" />
-										<span>基础配置</span></a>
+									<a href="#" onclick="showAtRight('internet.html')"><img src="img/internet.png" />
+										<span>云服务配置</span></a>
 								</div>
 							</li>
-						
+							<li class="">
+								<div class="li-div">
+									<a href="#" onclick="showAtRight('wan.html')"><img src="img/wan.png" />
+										<span>WAN配置</span></a>
+								</div>
+							</li>
+							<li class="">
+								<div class="li-div">
+									<a href="#" onclick="showAtRight('wifi.html')"><img src="img/wifi.png" />
+										<span>WI-FI配置</span></a>
+								</div>
+							</li>
 						</ul>
 					</div>
 
@@ -118,6 +130,84 @@
 				</div>
 			</div>
 		</div>
-		<script></script>
+		<script>
+			$(function() {
+
+				let id = sessionStorage.getItem("userName");
+				if (id === null || id === "") {
+					return window.location.href = "index.html";
+				}
+
+				$(".menu ul li").click(function() {
+					$("li").removeClass();
+					$(this).addClass("li-active");
+				});
+
+			});
+
+			window.onbeforeunload = function(event) {
+				$.ajax({
+					url: GetUrlRelativePath() + '/gateway/signOut',
+					data: {
+						userName: 'admin',
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						if (data.code == 0) {
+							console.log("退出回复成功")
+						} else {
+							console.log("退出回复失败")
+						}
+					},
+					error: function() {
+					}
+				});
+			}
+			
+			function GetUrlRelativePath() {
+				var url = document.location.toString();
+				var arrUrl = url.split("//");
+				var start = arrUrl[1].split("/");
+				return "http://" + start[0];
+			}
+
+
+
+			function exitIndex() {
+				sessionStorage.removeItem("mode");
+				sessionStorage.removeItem("userName");
+				window.location.href = "index.html";
+			}
+
+			function showAtRight(url) {
+				let xmlHttp;
+
+				if (window.XMLHttpRequest) {
+					// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlHttp = new XMLHttpRequest(); //创建 XMLHttpRequest对象
+				} else {
+					// code for IE6, IE5
+					xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlHttp.onreadystatechange = function() {
+					//onreadystatechange — 当readystate变化时调用后面的方法
+
+					if (xmlHttp.readyState === 4) {
+						//xmlHttp.readyState == 4	——	finished downloading response
+						if (xmlHttp.status === 200) {
+							//xmlHttp.status == 200		——	服务器反馈正常
+							document.getElementById("external-frame").src = url; //重设页面中id="content"的div里的内容
+							//                    executeScript(xmlHttp.responseText);	//执行从服务器返回的页面内容里包含的JavaScript函数
+
+						}
+					}
+				};
+				//把请求发送到服务器上的指定文件（url指向的文件）进行处理
+				xmlHttp.open("GET", url, true); //true表示异步处理
+				xmlHttp.send();
+			}
+		</script>
 	</body>
 </html>

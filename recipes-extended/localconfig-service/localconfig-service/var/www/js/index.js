@@ -15,9 +15,9 @@ layui.use(['form', 'layer'], function() {
 	//自定义验证规则
 	form.verify({
 		userName: function(value) {
-			if (value.length === 0) {
-				return '请输入用户名';
-			}
+			// if (value.length === 0) {
+			// 	return '请输入用户名';
+			// }
 		},
 		userPassword: function(value) {
 			if (value.length === 0) {
@@ -27,7 +27,7 @@ layui.use(['form', 'layer'], function() {
 	});
 	//监听提交
 	form.on('submit(update-user-submit)', function(datas) {
-		let data = datas.field;
+		let data1 = datas.field;
 		let index = layer.msg('登录中...', {
 			icon: 16,
 			shade: 0.01,
@@ -38,10 +38,10 @@ layui.use(['form', 'layer'], function() {
 		$.ajax({
 			url: test + '/gateway/login',
 			data: {
-				userName: 'administrator',
-				userPassword: data.userPassword
+				userName: 'admin',
+				userPassword: data1.userPassword
 			},
-			dataType: 'json', //服务器返回json格式数据
+			dataType: 'json', //服务器返回json格式数据L
 			type: 'post', //HTTP请求类型
 			timeout: 10000, //超时时间设置为10秒；
 			success: function(data) {
@@ -49,9 +49,10 @@ layui.use(['form', 'layer'], function() {
 				if (data.code == 0) {
 					layer.msg("登录成功");
 					sessionStorage.setItem("mode", data.mode);
+					sessionStorage.setItem("userName", data1.userName)
 					window.location.href = "home.html";
 				} else if (data.code == 1) {
-					layer.alert("密码错误");
+					layer.alert("用户名或密码错误");
 				} else {
 					layer.alert("登录失败");
 				}
@@ -64,10 +65,10 @@ layui.use(['form', 'layer'], function() {
 	});
 });
 
-$("#userPassword").keyup(function (event) {
-    if (event.keyCode === 13) {
-        $("#login").trigger("click");
-    }
+$("#userPassword").keyup(function(event) {
+	if (event.keyCode === 13) {
+		$("#login").trigger("click");
+	}
 });
 
 function GetUrlRelativePath() {

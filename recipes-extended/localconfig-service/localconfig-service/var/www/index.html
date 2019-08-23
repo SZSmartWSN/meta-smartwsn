@@ -68,7 +68,7 @@
 				<div class="div-background-top">
 					<div style="margin-left: 10%;"><img class="img-logo" src="img/wsn_logo.png"></div>
 					<div style="line-height: 50px;text-align: center;margin-right: 10px;">|</div>
-					<div style="line-height: 50px;text-align: center;font-weight: bold;font-size: 25px;">Smart Gateway</div>
+					<div style="line-height: 50px;text-align: center;font-weight: bold;font-size: 25px;">Smart Gateway 本地配置</div>
 				</div>
 			</div>
 			<div class="layui-col-xs12 layui-col-md12 div-background-content">
@@ -78,7 +78,8 @@
 						<div class="layui-form-item" style="margin: 40px 30px;float: none;">
 							<label class="layui-form-label " for="userName">用户名</label>
 							<div class="layui-input-inline " style="width: 70%;">
-								<label class="layui-form-label " style="color: #000000;text-align: left;font-size: 18px;">administrator</label>
+								<label type="text" id="userName" name="userName" lay-filter="userName" lay-verify="userName" style="font-size: 18px;text-align: left;"
+								 autocomplete="off" class="layui-form-label">admin</label>
 							</div>
 						</div>
 						<div class="layui-form-item" style="margin: 40px 30px ">

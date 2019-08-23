@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="layui/css/layui.css" media="all" />
+	</head>
+	<div style="margin-left: 15px;margin-right: 15px;">
+		
+		<div class="layui-form" lay-filter="form-cloud" style="padding-top: 50px;">
+			<fieldset class="layui-elem-field layui-field-title fieldset-border-color fieldset-margin" style="padding-top: 10px;">
+				<legend>WAN配置</legend>
+			</fieldset>
+			<div class="layui-form-item">
+				<label class="layui-form-label label-width">描述</label>
+				<div class="layui-input-inline" style="width: 300px;">
+					<label class="layui-form-label label-width" style="width: 100%;text-align: left;">Gateway WAN口的IPv4设置</label>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label label-width" for="wanSelect">IPv4设置</label>
+				<div class="layui-input-inline" style="width: 350px;">
+					<select name="wanSelect" id="wanSelect" lay-verify="wanSelect" lay-filter="wanSelect">
+						<option selected="" value="1">DHCP</option>
+						<option value="2">手动</option>
+					</select>
+				</div>
+			</div>
+			
+			<div id="ipv4Div" style="display: none;">
+				<div class="layui-form-item" id="passwordDiv">
+					<label class="layui-form-label label-width" for="Ipv4Ip">IP地址</label>
+					<div class="layui-input-inline" style="width: 350px;">
+						<input type="text" name="Ipv4Ip" id="Ipv4Ip" lay-verify="Ipv4Ip" placeholder="请输入IPv4 IP地址" autocomplete="off"
+						 class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item" id="passwordDiv">
+					<label class="layui-form-label label-width" for="ipv4Mask">子网掩码</label>
+					<div class="layui-input-inline" style="width: 350px;">
+						<input type="text" name="ipv4Mask" id="ipv4Mask" lay-verify="ipv4Mask" placeholder="请输入IPv4 子网掩码" autocomplete="off"
+						 class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item" id="passwordDiv">
+					<label class="layui-form-label label-width" for="ipv4Gateway">默认网关</label>
+					<div class="layui-input-inline" style="width: 350px;">
+						<input type="text" name="ipv4Gateway" id="ipv4Gateway" lay-verify="ipv4Gateway" placeholder="请输入IPv4 默认网关"
+						 autocomplete="off" class="layui-input">
+					</div>
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label label-width" for="dataSelect"></label>
+				<div class="layui-input-inline">
+					<input type="button" lay-submit lay-filter="user-cloud-submit" value="保存" style="width: 120px" class="layui-btn">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript" src="layui/layui.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/wan.js"></script>
+	<body>
+	</body>
+</html>
