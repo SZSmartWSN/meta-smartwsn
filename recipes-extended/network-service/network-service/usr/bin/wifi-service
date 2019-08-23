@@ -27,7 +27,7 @@ if [ ! -x "$WPA_SUP_BIN" ] || [ ! -x "$WPA_CLI_BIN" ]; then
 fi
 
 # init wlan0
-$WPA_SUP_BIN -D wext -B -i $WPA_IFACE -c /etc/wpa_supplicant.conf
+$WPA_SUP_BIN -u -D wext -B -i $WPA_IFACE -c /etc/wpa_supplicant.conf
 
 $WPA_CLI_BIN -i $WPA_IFACE -B -a /usr/bin/wifi-action
 
