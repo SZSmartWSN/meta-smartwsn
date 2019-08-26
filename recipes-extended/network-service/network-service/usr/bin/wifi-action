@@ -11,17 +11,26 @@ UDHCPC_BIN="/sbin/udhcpc"
 
 case "${2}" in
         CONNECTED)
-                echo "COMMAND: CONNECTED" > /dev/kmsg
+                echo "COMMAND: CONNECTED" > /dev/console
                 if [ -e /var/run/udhcpc.pid ]; then
                     UDHCPC_PID=`cat /var/run/udhcpc.pid`
                     kill -9 $UDHCPC_PID
+                fi
+                if [ -e /home/root/WIFI_METHOD_DHCP ]; then
+                    echo "WIFI_METHOD_DHCP" > /dev/console
                     $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
+                fi
+                if [ -e /home/root/WIFI_METHOD_RESET ]; then
+                    echo "WIFI_METHOD_RESET" > /dev/console
+                    /usr/bin/wifi-reset
+                    /bin/touch /home/root/WIFI_METHOD_DHCP
+                    /bin/rm -f /home/root/WIFI_METHOD_RESET
                 fi
                 COMMAND=scan
                 exit 0
                 ;;
         DISCONNECTED)
-                echo "COMMAND: DISCONNECTED" > /dev/kmsg
+                echo "COMMAND: DISCONNECTED" > /dev/console
                 COMMAND=reconnect
                 ;;
         *)
