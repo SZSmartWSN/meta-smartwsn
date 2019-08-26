@@ -94,7 +94,7 @@ layui.use(['form', 'layer'], function() {
 			icon: 16,
 			shade: 0.01,
 			shadeClose: false,
-			time: 10000
+			time: 20000
 		});
 		var test = GetUrlRelativePath();
 		$.ajax({
@@ -110,7 +110,7 @@ layui.use(['form', 'layer'], function() {
 			},
 			dataType: 'json', //服务器返回json格式数据
 			type: 'post', //HTTP请求类型
-			timeout: 10000, //超时时间设置为10秒；
+			timeout: 20000, //超时时间设置为10秒；
 			success: function(data) {
 				layer.close(index);
 				if (data.code == 0) {
@@ -191,18 +191,17 @@ function syncWifi() {
 			if (data.code == 0) {
 				let wifiSSID = document.getElementById('HandoverCompany');
 				wifiSSID.value = data.wifiSSID;
-				let wifiPassword = document.getElementById('password');
-				wifiPassword.value = data.wifiPassword;
-				let encryptionSelect = document.getElementById("encryptionSelect");
-				encryptionSelect.val = data.encryptionMode+"";
 				let passwordDiv = document.getElementById("passwordDiv");
 				if (parseInt(data.encryptionMode) !== 1) {
 					passwordDiv.style.display = "inherit";
 				} else {
 					passwordDiv.style.display = "none";
 				}
-				let ipSelect = document.getElementById('ipSelect');
-				ipSelect.val = data.ipMode+"";
+				form.val('form-cloud',{
+					"password":data.wifiPassword,
+					"encryptionSelect":data.encryptionMode,
+					"ipSelect":data.ipMode
+				})
 				let ipv4 = document.getElementById("ipv4Div");
 				if (parseInt(data.ipMode) == 2) {
 					ipv4.style.display = "inherit";
