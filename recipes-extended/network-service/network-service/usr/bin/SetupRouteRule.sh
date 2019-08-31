@@ -10,6 +10,7 @@
 VERSION_TYPE=1
 
 IFACE_NAME_WAN='eth0'
+IFACE_NAME_LAN='eth1'
 IFACE_NAME_WIFI='wlan0'
 
 ##############################################
@@ -115,6 +116,15 @@ function setDefaultRouteMetric()
     ip route replace default via ${gateway[0]} dev ${iface}  proto static  metric ${expected}
   else
     LOGD "<setDefaultRouteMetric>: metric is equal to expected"
+    # 检测LAN是否已设置默认路由
+    isExisted=`ip route | grep default | grep ${IFACE_NAME_LAN} | wc -l`
+    if test ${isExisted} -eq 1
+    then
+      # 获取默认路由的Gateway值
+      gateway=(`ip route | grep default | grep ${iface} | awk '{print $3}'`)
+      # 删除默认路由规则，并设置为最高优先级(metric: 0)
+      ip route del default via ${gateway[0]} dev ${iface}  proto static  metric ${expected}
+    fi
   fi
 
   return 0
