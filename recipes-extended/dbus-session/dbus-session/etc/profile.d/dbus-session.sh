@@ -16,4 +16,8 @@ if [ ! -e /var/log/supervisor ]; then
     mkdir -p /var/log/supervisor
 fi
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+
+# start /usr/bin/SetupRouteRule.sh
+/usr/bin/SetupRouteRule.sh &
+
 fi

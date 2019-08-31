@@ -6,6 +6,7 @@ PR = "r0"
 
 SRC_URI = " \
     file://usr/bin/getIfaceInfo.sh \
+    file://usr/bin/SetupRouteRule.sh \
     file://usr/bin/wifi-config \
     file://usr/bin/wifi-scan \
     file://usr/bin/wifi-ssid \
@@ -26,6 +27,7 @@ RDEPENDS_${PN} = "bash \
 do_install() {
     install -d ${D}${bindir}
     install -m 755 ${S}${bindir}/getIfaceInfo.sh ${D}${bindir}
+    install -m 755 ${S}${bindir}/SetupRouteRule.sh ${D}${bindir}
     install -m 755 ${S}${bindir}/wifi-config ${D}${bindir}
     install -m 755 ${S}${bindir}/wifi-scan ${D}${bindir}
     install -m 755 ${S}${bindir}/wifi-ssid ${D}${bindir}
