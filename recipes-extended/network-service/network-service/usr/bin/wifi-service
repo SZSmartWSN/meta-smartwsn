@@ -38,17 +38,36 @@ if [ x"$SSID" == x"FAIL" ]; then
 fi
 
 # alloc IP address for wlan0
-IP=`ifconfig "$WPA_IFACE" | grep -E 'inet addr:' | awk '{print $2}' | cut -c 6-13`
-if [ x"$IP" == x ]; then
-    if [ -e /var/run/udhcpc.pid ]; then
-        UDHCPC_PID=`cat /var/run/udhcpc.pid`
-        kill -9 $UDHCPC_PID
-    fi
-    $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
-fi
+# IP=`ifconfig "$WPA_IFACE" | grep -E 'inet addr:' | awk '{print $2}' | cut -c 6-13`
+# if [ x"$IP" == x ]; then
+#    if [ -e /var/run/udhcpc.pid ]; then
+#        UDHCPC_PID=`cat /var/run/udhcpc.pid`
+#        kill -9 $UDHCPC_PID
+#    fi
+#    $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
+# fi
 
 # reset wlan0
 $IFCONFIG_BIN $WPA_IFACE down
 $IFCONFIG_BIN $WPA_IFACE up
+
+while true
+do
+  IP=`/sbin/ifconfig $WPA_IFACE | grep 'inet ' | cut -d: -f2 | awk '{print $1}'`
+  if [ x"$IP" == x ]; then
+    $WPA_CLI_BIN -i $WPA_IFACE enable_network 0
+    $WPA_CLI_BIN -i $WPA_IFACE select_netwrok 0
+    if [ -e /home/root/WIFI_METHOD_DHCP ]; then
+      if [ -e /var/run/udhcpc.pid ]; then
+        UDHCPC_PID=`cat /var/run/udhcpc.pid`
+        kill -9 $UDHCPC_PID
+      fi
+      $UDHCPC_BIN -b -R -i $WPA_IFACE -p /var/run/udhcpc.pid
+    fi
+  fi
+
+  sleep 30
+done
+
 
 exit 0
