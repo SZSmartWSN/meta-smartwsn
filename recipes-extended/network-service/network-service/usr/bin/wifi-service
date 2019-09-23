@@ -20,6 +20,81 @@ IFCONFIG_BIN="/sbin/ifconfig"
 IFCONFIG_PNAME="ifconfig"
 
 ######################################################################
+# Version Type, 0 - Debug, 1 - Release
+VERSION_TYPE=1
+
+# @brief: 输出log信息, debug level
+function LOGD()
+{
+  if test ${VERSION_TYPE} -eq 0
+  then
+    echo $1 > /dev/stdout
+  else
+    echo $1 > /dev/null
+  fi
+}
+
+# @brief: WLAN模块是否加载成功
+#
+# @return: 0 (加载成功)
+#          1 (加载失败)
+function isExistedWlan()
+{
+  local retval
+
+  retval=0
+
+  retval=`test -e /sys/class/net/${WPA_IFACE}`
+
+  return ${retval}
+}
+
+# @brief: 重加载WLAN模块
+#
+# @return: 0 (成功)
+#          1 (失败)
+function reloadWlan()
+{
+  local retval
+
+  retval=0
+
+  # turn off the module's power
+  echo 100 > /sys/class/leds/led_cs2/brightness
+  sleep 1
+  # turn on the module's power
+  echo   0 > /sys/class/leds/led_cs2/brightness
+  sleep 3
+
+  return ${retval}
+}
+
+# @brief: 等待WLAN模块加载完成
+#
+# @return: 0 (成功)
+#          1 (失败)
+function isReadyWlan()
+{
+  local retval
+
+  retval=0
+
+  while true
+  do
+    isExistedWlan
+    if test $? -ne 0
+    then
+      reloadWlan
+    else
+      LOGD "WLAN is ready"
+      break
+    fi
+
+    sleep 5
+  done
+
+  return ${retval}
+}
 
 # quit if executables are not installed
 if [ ! -x "$WPA_SUP_BIN" ] || [ ! -x "$WPA_CLI_BIN" ]; then

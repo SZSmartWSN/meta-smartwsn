@@ -40,17 +40,27 @@ function getIfaceConnStatus()
   retval=0
 
   # 获取WAN当前状态, 0 - 未连接, 1 - 已连接
-  flag=`cat /sys/class/net/${IFACE_NAME_WAN}/carrier`
-  if test ${flag} -eq 1
-  then
-    retval=`expr ${retval} + 1`
+  if [ -e /sys/class/net/${IFACE_NAME_WAN} ]; then
+    flag=`cat /sys/class/net/${IFACE_NAME_WAN}/carrier`
+    if test $? -eq 0
+    then
+      if test ${flag} -eq 1
+      then
+        retval=`expr ${retval} + 1`
+      fi
+    fi
   fi
 
   # 获取WiFi当前状态, 0 - 未连接, 1 - 已连接
-  flag=`cat /sys/class/net/${IFACE_NAME_WIFI}/carrier`
-  if test ${flag} -eq 1
-  then
-    retval=`expr ${retval} + 2`
+  if [ -e /sys/class/net/${IFACE_NAME_WIFI} ]; then
+    flag=`cat /sys/class/net/${IFACE_NAME_WIFI}/carrier`
+    if test $? -eq 0
+    then
+      if test ${flag} -eq 1
+      then
+        retval=`expr ${retval} + 2`
+      fi
+    fi
   fi
 
   return ${retval}

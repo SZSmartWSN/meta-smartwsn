@@ -39,6 +39,7 @@ case "${2}" in
                 ;;
 esac
 
+$WPA_CLI_BIN -i $WPA_IFACE scan
 $WPA_CLI_BIN -i $WPA_IFACE $COMMAND
 
 exit 0
